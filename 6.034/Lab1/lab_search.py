@@ -23,12 +23,23 @@ def path_length(graph, path):
     (That is, the list of nodes defines a path through the graph.)
     A path with fewer than 2 nodes should have length of 0.
     You can assume that all edges along the path have a valid numeric weight."""
-    raise NotImplementedError
+    if len(path) < 2:
+        return 0
+    path_weight = 0
+    for i in range(1,len(path)):
+        path_weight += graph.get_edge(path[i-1],path[i]).length
+    return path_weight
 
 def has_loops(path):
     """Returns True if this path has a loop in it, i.e. if it
     visits a node more than once. Returns False otherwise."""
-    raise NotImplementedError
+    visited = set()
+    for node in path:
+        if node in visited:
+            return True
+        else:
+            visited.add(node)
+    return False
 
 def extensions(graph, path):
     """Returns a list of paths. Each path in the list should be a one-node
@@ -36,7 +47,13 @@ def extensions(graph, path):
     by adding a neighbor node (of the final node in the path) to the path.
     Returned paths should not have loops, i.e. should not visit the same node
     twice. The returned paths should be sorted in lexicographic order."""
-    raise NotImplementedError
+    visited = set(path)
+    neighbors = sorted(graph.get_neighbors(path[-1]))
+    out_paths = []
+    for neighbor in neighbors:
+        if neighbor not in visited:
+            out_paths.append(path.copy()+[neighbor])
+    return sorted(out_paths)
 
 def sort_by_heuristic(graph, goalNode, nodes):
     """Given a list of nodes, sorts them best-to-worst based on the heuristic
@@ -44,7 +61,9 @@ def sort_by_heuristic(graph, goalNode, nodes):
     consider a smaller heuristic value to be "better" because it represents a
     shorter potential path to the goal. Break ties lexicographically by 
     node name."""
-    raise NotImplementedError
+    heuristic_vals = sorted([(graph.get_heuristic_value(node,goalNode), node) for node in nodes])
+    sorted_nodes = [node[1] for node in heuristic_vals]
+    return sorted_nodes 
 
 # You can ignore the following line.  It allows generic_search (PART 3) to
 # access the extensions and has_loops functions that you just defined in PART 1.
@@ -60,7 +79,15 @@ def basic_dfs(graph, startNode, goalNode):
     exists, otherwise returning None.
     Uses backtracking, but does not use an extended set.
     """
-    raise NotImplementedError
+    q = [[startNode]]
+    while q:
+        currPath = q.pop()
+        endNode = currPath[-1]
+        if endNode == goalNode: break 
+        for path in reversed(extensions(graph,currPath)):
+            q.append(path)
+    return currPath if q else None 
+
 
 def basic_bfs(graph, startNode, goalNode):
     """
@@ -68,7 +95,14 @@ def basic_bfs(graph, startNode, goalNode):
     node to a specified goal node, returning a path-to-goal if it
     exists, otherwise returning None.
     """
-    raise NotImplementedError
+    q = [[startNode]]
+    while q:
+        currPath = q.pop(0)
+        endNode = currPath[-1]
+        if endNode == goalNode: break 
+        for path in extensions(graph,currPath):
+            q.append(path)
+    return currPath if q else None 
 
 
 #### PART 3: Generic Search ####################################################
@@ -88,21 +122,27 @@ def basic_bfs(graph, startNode, goalNode):
 
 
 
-generic_dfs = [None, None, None, None]
+generic_dfs = [do_nothing_fn, True, do_nothing_fn, False]
 
-generic_bfs = [None, None, None, None]
+generic_bfs = [do_nothing_fn, False, do_nothing_fn, False]
 
-generic_hill_climbing = [None, None, None, None]
+def sort_hill_climbing(graph,goalNode,paths):
+    return sorted(paths, key=lambda x:graph.get_heuristic_value(x[-1],goalNode))
+generic_hill_climbing = [sort_hill_climbing, True,do_nothing_fn , False]
 
-generic_best_first = [None, None, None, None]
+generic_best_first = [sort_hill_climbing, True, sort_hill_climbing, False]
 
-generic_branch_and_bound = [None, None, None, None]
+def sort_by_length(graph,goalNode,paths):
+    return sorted(paths,key= lambda x: path_length(graph,x))
+generic_branch_and_bound = [do_nothing_fn, False, sort_by_length, False]
 
-generic_branch_and_bound_with_heuristic = [None, None, None, None]
+def sort_by_length_and_heur(graph,goalNode,paths):
+    return sorted(paths,key= lambda x: path_length(graph,x)+graph.get_heuristic_value(x[-1],goalNode))
+generic_branch_and_bound_with_heuristic = [do_nothing_fn, False, sort_by_length_and_heur, False]
 
-generic_branch_and_bound_with_extended_set = [None, None, None, None]
+generic_branch_and_bound_with_extended_set = [do_nothing_fn, False, sort_by_length, True]
 
-generic_a_star = [None, None, None, None]
+generic_a_star = [do_nothing_fn, False, sort_by_length_and_heur, True]
 
 
 # Here is an example of how to call generic_search (uncomment to run):
@@ -138,8 +178,11 @@ def is_admissible(graph, goalNode):
     """Returns True if this graph's heuristic is admissible; else False.
     A heuristic is admissible if it is either always exactly correct or overly
     optimistic; it never over-estimates the cost to the goal."""
-    raise NotImplementedError
-
+    for node in graph.nodes: 
+        path = generic_search(*generic_branch_and_bound)(graph, node, goalNode)
+        if graph.get_heuristic_value(node,goalNode) > path_length(graph,path):
+            return False
+    return True
 def is_consistent(graph, goalNode):
     """Returns True if this graph's heuristic is consistent; else False.
     A consistent heuristic satisfies the following property for all
@@ -149,7 +192,10 @@ def is_consistent(graph, goalNode):
     In other words, moving from one node to a neighboring node never unfairly
     decreases the heuristic.
     This is equivalent to the heuristic satisfying the triangle inequality."""
-    raise NotImplementedError
+    for edge in graph.edges:
+        if edge.length < abs(graph.get_heuristic_value(edge.startNode,goalNode)-graph.get_heuristic_value(edge.endNode,goalNode)):
+            return False
+    return True
 
 
 ### OPTIONAL: Picking Heuristics
@@ -209,23 +255,24 @@ heuristic_4['G']['G'] = h4_G
 
 ##### PART 5: Multiple Choice ##################################################
 
-ANSWER_1 = ''
+ANSWER_1 = '2'
 
-ANSWER_2 = ''
+ANSWER_2 = '4'
 
-ANSWER_3 = ''
+ANSWER_3 = '1'
 
-ANSWER_4 = ''
+ANSWER_4 = '3'
 
 
 #### SURVEY ####################################################################
 
-NAME = None
-COLLABORATORS = None
-HOW_MANY_HOURS_THIS_LAB_TOOK = None
-WHAT_I_FOUND_INTERESTING = None
-WHAT_I_FOUND_BORING = None
-SUGGESTIONS = None
+NAME = "Sami Amer" 
+COLLABORATORS = "None" 
+HOW_MANY_HOURS_THIS_LAB_TOOK = "Two" 
+WHAT_I_FOUND_INTERESTING = "Demonstrating the Similarities between search algorithms is really cool, and is just as important as the differences" 
+WHAT_I_FOUND_BORING = "None" 
+SUGGESTIONS = "Helper code that visualizes the search alogrithm would greatly increase understanding and fun" 
+
 
 
 
