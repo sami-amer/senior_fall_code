@@ -283,9 +283,11 @@ def progressive_deepening(state, heuristic_fn=always_zero, depth_limit=INF,
                           maximize=True) :
     """Runs minimax with alpha-beta pruning. At each level, updates anytime_value
     with the tuple returned from minimax_search_alphabeta. Returns anytime_value."""
-    raise NotImplementedError
-
-
+    anytime = AnytimeValue()
+    for i in range(1,depth_limit+1):
+        score = minimax_search_alphabeta(state,maximize=maximize,heuristic_fn=heuristic_fn,depth_limit=i)
+        anytime.set_value(score)
+    return anytime
 # Uncomment the line below to try progressive_deepening with "BOARD_UHOH" and
 # depth_limit=4. Compare the total number of evaluations with the number of
 # evaluations from minimax_search or minimax_search_alphabeta.
@@ -306,20 +308,20 @@ if not TEST_PROGRESSIVE_DEEPENING:
 
 #### Part 3: Multiple Choice ###################################################
 
-ANSWER_1 = ''
+ANSWER_1 = '4'
 
-ANSWER_2 = ''
+ANSWER_2 = '1'
 
-ANSWER_3 = ''
+ANSWER_3 = '4'
 
-ANSWER_4 = ''
+ANSWER_4 = '5'
 
 
 #### SURVEY ###################################################
 
-NAME = None
-COLLABORATORS = None
-HOW_MANY_HOURS_THIS_LAB_TOOK = None
-WHAT_I_FOUND_INTERESTING = None
-WHAT_I_FOUND_BORING = None
-SUGGESTIONS = None
+NAME = "Sami Amer" 
+COLLABORATORS = "None" 
+HOW_MANY_HOURS_THIS_LAB_TOOK = "3" 
+WHAT_I_FOUND_INTERESTING = "progressive deepening" 
+WHAT_I_FOUND_BORING = "nothing really" 
+SUGGESTIONS = "DFS implementations should start off recursive. It is a little annoying that we use the stack method in the first couple of questions, but then switch to recursive." 
