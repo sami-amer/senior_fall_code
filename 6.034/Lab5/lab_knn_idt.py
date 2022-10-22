@@ -1,7 +1,9 @@
 # MIT 6.034 k-Nearest Neighbors and Identification Trees Lab
 # Written by 6.034 Staff
 
+from fileinput import close
 from pyexpat import features
+from turtle import distance
 from api import *
 from data import *
 import math
@@ -247,15 +249,19 @@ def get_k_closest_points(point, data, k, distance_metric):
     and a distance metric (a function), returns a list containing the k points
     from the data that are closest to the test point, according to the distance
     metric.  Breaks ties lexicographically by coordinates."""
-    raise NotImplementedError
+
+    distances = [(distance_metric(point,x),x) for x in data]
+    distances.sort(key= lambda x: (x[0],x[1].coords))
+    return [x[1] for x in distances[:k]]
 
 def knn_classify_point(point, data, k, distance_metric):
     """Given a test point, a list of points (the data), an int 0 < k <= len(data),
     and a distance metric (a function), returns the classification of the test
     point based on its k nearest neighbors, as determined by the distance metric.
     Assumes there are no ties."""
-    raise NotImplementedError
-
+    closest = get_k_closest_points(point,data,k,distance_metric)
+    closest = [point.classification for point in closest]
+    return max(closest, key = lambda x: closest.count(x))
 
 ## To run your classify function on the k-nearest neighbors problem from 2014 Q2
 ## part B2, uncomment the line below and try different values of k:
@@ -268,14 +274,45 @@ def cross_validate(data, k, distance_metric):
     """Given a list of points (the data), an int 0 < k <= len(data), and a
     distance metric (a function), performs leave-one-out cross-validation.
     Return the fraction of points classified correctly, as a float."""
-    raise NotImplementedError
+
+    total_tested = len(data)
+    correct = 0
+
+    for i in range(len(data)):
+
+        test_set = data[i]
+        train_set = data[:i]+data[i+1:]
+        classification = knn_classify_point(test_set,train_set,k,distance_metric)
+
+        if classification == test_set.classification:
+            correct += 1
+    
+    return correct / total_tested
+        
 
 def find_best_k_and_metric(data):
     """Given a list of points (the data), uses leave-one-out cross-validation to
     determine the best value of k and distance_metric, choosing from among the
     four distance metrics defined above.  Returns a tuple (k, distance_metric),
     where k is an int and distance_metric is a function."""
-    raise NotImplementedError
+
+    ks = len(data) // 2
+    distance_metrics = {"manhattan_distance":manhattan_distance, "cosine_distance":cosine_distance, "euclidean_distance":euclidean_distance, "hamming_distance":hamming_distance}
+
+    best_score = float('-inf')
+    best_params = (None,None)
+
+    for k in range(1,ks):
+        for name,metric in distance_metrics.items():
+
+            curr_score = cross_validate(data, k, metric)
+
+            if  curr_score > best_score:
+                best_score = curr_score 
+                best_params = (k, metric)
+    
+    return best_params 
+
 
 
 ## To find the best k and distance metric for 2014 Q2, part B, uncomment:
@@ -284,21 +321,21 @@ def find_best_k_and_metric(data):
 
 #### Part 2E: More multiple choice #############################################
 
-kNN_ANSWER_1 = None
-kNN_ANSWER_2 = None
-kNN_ANSWER_3 = None
+kNN_ANSWER_1 = "Overfitting" 
+kNN_ANSWER_2 = "Underfitting" 
+kNN_ANSWER_3 = 4 
 
-kNN_ANSWER_4 = None
-kNN_ANSWER_5 = None
-kNN_ANSWER_6 = None
-kNN_ANSWER_7 = None
+kNN_ANSWER_4 = 4
+kNN_ANSWER_5 = 1 
+kNN_ANSWER_6 = 3
+kNN_ANSWER_7 = 3
 
 
 #### SURVEY ####################################################################
 
-NAME = None
-COLLABORATORS = None
-HOW_MANY_HOURS_THIS_LAB_TOOK = None
-WHAT_I_FOUND_INTERESTING = None
-WHAT_I_FOUND_BORING = None
-SUGGESTIONS = None
+NAME = "Sami Amer" 
+COLLABORATORS = "None"
+HOW_MANY_HOURS_THIS_LAB_TOOK = "4" 
+WHAT_I_FOUND_INTERESTING = "Never heard of ID trees before" 
+WHAT_I_FOUND_BORING = "Nothing, same old" 
+SUGGESTIONS = "adding a visualization tool for KNN would be very nice, but its not that hard of a concept so maybe not necessary" 
