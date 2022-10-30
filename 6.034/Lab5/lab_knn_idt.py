@@ -1,9 +1,6 @@
 # MIT 6.034 k-Nearest Neighbors and Identification Trees Lab
 # Written by 6.034 Staff
 
-from fileinput import close
-from pyexpat import features
-from turtle import distance
 from api import *
 from data import *
 import math
