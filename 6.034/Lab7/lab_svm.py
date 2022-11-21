@@ -93,8 +93,9 @@ def check_alpha_equations(svm):
     """Returns True if both Lagrange-multiplier equations are satisfied,
     otherwise False. Assumes that the SVM has support vectors assigned, and
     that all training points have alpha values assigned."""
+    dimensions = len(svm.training_points[0].coords)
     s1 = 0
-    vec = Point(None,(0,0))
+    vec = Point(None,[0]*dimensions)
     for point in svm.training_points:
         ya = point.classification * point.alpha
         s1 += ya
