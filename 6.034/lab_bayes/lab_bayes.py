@@ -149,14 +149,53 @@ def is_structurally_independent(net, var1, var2, givens=None):
     based on the structure of the Bayes net, otherwise False.
     Uses structural independence only (not numerical independence).
     """
-    raise NotImplementedError
+
+    if givens == None: givens = []
+    # make ancestral graph
+    # get the two variables and all ancestors
+    ancestors = get_ancestors(net,var1)
+    ancestors.update(get_ancestors(net,var2))
+
+    var_graph = [var1,var2]
+    for given in list(givens):
+        ancestors.update(get_ancestors(net,given))
+        var_graph += given
+
+    # use subnets to make the graph 
+    ancestor_graph = net.subnet(var_graph+list(ancestors))
+    var_graph = net.subnet(var_graph)
+
+    # link parents 
+    for node in reversed(var_graph.topological_sort()):
+        parents = list(net.get_parents(node))
+        if len(parents) > 1:
+            # for i in range(len(parents)):
+            #     for j in range(i+1,len(parents)):
+            #         # only need to link it one way, we are making it bi-directional later
+            #         net.link(parents[i],parents[j])
+            ancestor_graph.link(parents[0],parents[1])
+    
+    ancestor_graph.make_bidirectional()
+
+    # remove givens from the graph
+    for given in list(givens):
+        ancestor_graph.remove_variable(given)
+    
+    if ancestor_graph.find_path(var1,var2) == None: # if the nodes are disconnected
+        return True # guaranteed to be independent
+    else:
+        return False
+
+
+
+
 
 
 #### SURVEY ####################################################################
 
-NAME = None
-COLLABORATORS = None
-HOW_MANY_HOURS_THIS_LAB_TOOK = None
-WHAT_I_FOUND_INTERESTING = None
-WHAT_I_FOUND_BORING = None
-SUGGESTIONS = None
+NAME = "Sami Amer" 
+COLLABORATORS = "None" 
+HOW_MANY_HOURS_THIS_LAB_TOOK = "4"
+WHAT_I_FOUND_INTERESTING = "Never seen this bayes net before, was pretty cool learning about it" 
+WHAT_I_FOUND_BORING = "I am taking a stats class at the same time, one can only take so much bayes" 
+SUGGESTIONS = "more viz, but the ones in the PDF were cool though" 
