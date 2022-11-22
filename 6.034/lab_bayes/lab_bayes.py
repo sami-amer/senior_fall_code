@@ -139,9 +139,9 @@ def is_independent(net, var1, var2, givens=None):
         p1 = probability(net,{var1:comb[var1]},givens)
         p2 = probability(net,{var2:comb[var2]},givens)
         # if P(AB) == P(A)P(B), A and B are independent
-        if approx_equal(joint, p1*p2):
-            return True
-    return False
+        if not approx_equal(joint, p1*p2):
+            return False 
+    return True 
     
 def is_structurally_independent(net, var1, var2, givens=None):
     """
