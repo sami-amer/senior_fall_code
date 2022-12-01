@@ -88,9 +88,9 @@ def update_weights(point_to_weight, misclassified_points, error_rate):
     required) to modify the input dictionary point_to_weight."""
     for point in point_to_weight:
         if point in misclassified_points:
-            point_to_weight[point] = make_fraction(Fraction(1,2) * 1/(error_rate) * point_to_weight[point])
+            point_to_weight[point] = Fraction(1,2) * Fraction(1,error_rate) * Fraction(point_to_weight[point])
         else:
-            point_to_weight[point] = make_fraction(Fraction(1,2) * 1/(1-error_rate) * point_to_weight[point])
+            point_to_weight[point] = Fraction(1,2) * Fraction(1,1-error_rate) * Fraction(point_to_weight[point])
     return point_to_weight
 
 #### Part 2: Adaboost ##########################################################
