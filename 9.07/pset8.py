@@ -64,7 +64,7 @@ print("hat_var",hat_var)
 hat_e_k = y_data - sample_mean_y
 # print("hat_e_k",hat_e_k)
 
-F_n = np.sort(hat_e_k) / n
+F_n = np.sort(hat_e_k)# / n
 # print("F_n",F_n)
 
 from numpy.random import default_rng
@@ -97,12 +97,12 @@ def bootstrap(F_n,hat_Beta_0,hat_Beta_1,x_data,B):
 
 hB0star, hB1star = bootstrap(F_n, hat_Beta_0, hat_Beta_1, x_data, B) # * Part A
 # print(hB0star,hB1star)
-
+import math
 def standard_error(B,b_stars):
     numerator = np.sum((b_stars-np.mean(b_stars))**2)
     denominator = B-1 
 
-    return numerator/denominator 
+    return math.sqrt(numerator/denominator)
 
 se_b_0 = standard_error(B, hB0star)
 print("standard error of b0_star",se_b_0) # * Part A
