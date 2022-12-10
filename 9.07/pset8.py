@@ -15,8 +15,8 @@ with open(data_source,'r') as f:
 # print(data)
 
 B = 100
-x_data = np.array([x[0] for x in data])
-y_data = np.array([y[1] for y in data])
+x_data = np.array([x[1] for x in data])
+y_data = np.array([y[0] for y in data])
 n = len(x_data)
 
 variance = np.var(y_data)
@@ -136,4 +136,4 @@ plt.show()
 # * The standard errors were 29 and 0.47
 # * The confidence intervals were [1612,1728] and [-4.2,-2.2]
 
-# * The 
+# * The estimates here are 256 and -0.13
