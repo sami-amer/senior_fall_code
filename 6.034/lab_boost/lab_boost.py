@@ -36,7 +36,7 @@ def pick_best_classifier(classifier_to_error_rate, use_smallest_error=True):
         best = min(min_list) if min_list else best
     else:
         best = max(classifier_to_error_rate, key = lambda x: abs(make_fraction((classifier_to_error_rate[x])-Fraction(1,2))))
-        min_list = [x for x in classifier_to_error_rate if approx_equal(classifier_to_error_rate[x], classifier_to_error_rate[best])]
+        min_list = [x for x in classifier_to_error_rate if approx_equal(abs(classifier_to_error_rate[x]-Fraction(1,2)), abs(classifier_to_error_rate[best]-Fraction(1,2)))]
         best = min(min_list) if min_list else best
     if approx_equal(make_fraction(classifier_to_error_rate[best]), Fraction(1,2)): raise NoGoodClassifiersError()
     else: return best
