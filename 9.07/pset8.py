@@ -126,14 +126,17 @@ print("CI by histogram",ci_method_2)
 
 import matplotlib.pyplot as plt
 
-plt.hist(hB0star,bins="auto")
-plt.show()
-plt.hist(hB1star,bins="auto")
-plt.show()
+# plt.hist(hB0star,bins="auto")
+# plt.show()
+# plt.hist(hB1star,bins="auto")
+# plt.show()
 
 
 # * The estimates in problem 8 were 1670 for alpha (beta_0) and -3.24 for beta (beta_1)
 # * The standard errors were 29 and 0.47
 # * The confidence intervals were [1612,1728] and [-4.2,-2.2]
 
-# * The estimates here are 256 and -0.13
+# * The estimates here are 1670.31 and -3.245
+# * The standard errors are 0.25 and 0.0001
+# * The CIs by standard error are [1670.08,1670.58] and [-3.24567,-3.24545]
+# * The CIs by histogram are [1669.168,1671.276] and [-3.2655,-3.2209]
