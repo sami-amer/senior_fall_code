@@ -137,6 +137,6 @@ import matplotlib.pyplot as plt
 # * The confidence intervals were [1612,1728] and [-4.2,-2.2]
 
 # * The estimates here are 1670.31 and -3.245
-# * The standard errors are 0.25 and 0.0001
-# * The CIs by standard error are [1670.08,1670.58] and [-3.24567,-3.24545]
-# * The CIs by histogram are [1669.168,1671.276] and [-3.2655,-3.2209]
+# * The standard errors are 30 and 0.639
+# * The CIs by standard error are [1638.32,1698.89] and [-3.8491,-2.56917]
+# * The CIs by histogram are [1611.789,1727.636] and [-4.4564,-2.0084]
